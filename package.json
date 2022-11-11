@@ -1,0 +1,26 @@
+{
+  "name": "article-crawling",
+  "version": "1.0.0",
+  "description": "Node爬虫",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JustinJsn/node-article-crawling.git"
+  },
+  "keywords": [
+    "爬虫",
+    "Node"
+  ],
+  "author": "JustinJsn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JustinJsn/node-article-crawling/issues"
+  },
+  "homepage": "https://github.com/JustinJsn/node-article-crawling#readme",
+  "dependencies": {
+    "koa": "^2.13.4"
+  }
+}
