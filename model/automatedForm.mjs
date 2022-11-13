@@ -56,7 +56,7 @@ export default async function automatedForm(page) {
     "#app > div.layout-wrapper > div > div.post-title-card > div.el-input.title-input > input"
   );
 
-  exec("clip").stdin.end(iconv.encode(data[0].title, "gbk"));
+  exec("clip").stdin.end(iconv.encode(data[0].title, "utf-8"));
   await title.focus();
   await page.keyboard.down("Control");
   await page.keyboard.down("V");
@@ -74,7 +74,7 @@ export default async function automatedForm(page) {
     ".tox-dialog__content-js > div > div > div > div > textarea"
   );
 
-  exec("clip").stdin.end(iconv.encode(data[0].content, "gbk"));
+  exec("clip").stdin.end(iconv.encode(data[0].content, "utf-8"));
   await textarea.focus();
   await page.keyboard.down("Control");
   await page.keyboard.down("V");

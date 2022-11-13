@@ -3,7 +3,7 @@ import { load } from "cheerio";
 import sleep from "../utils/sleep.mjs";
 import { resolve, readFilePromise } from "../utils/fileSystem.mjs";
 import { replaceAsync, myAsyncFn } from "../utils/replaceAndUpload.mjs";
-console.log(3)
+
 async function fetchDetailData() {
   try {
     const json = await readFilePromise(resolve("listJson/金评测_1.json"));
@@ -32,17 +32,15 @@ async function fetchDetailData() {
         "ig"
       );
       const replaceArticle = article.replace(descReg, "").replace(purchase, "");
-
-      // const imgReg = /<img [^>]*src=['"]([^'"]+)[^>]*>/gi;
-
-      // console.log(await replaceAsync(replaceArticle, imgReg, myAsyncFn));
+      const imgReg = /<img [^>]*src=['"]([^'"]+)[^>]*>/gi;
+      const content = await replaceAsync(replaceArticle, imgReg, myAsyncFn)
 
       // 这里需要做一下图片上传 cdn 替换操作
       // console.log(replaceArticle);
 
       detailItem.push({
         title: parseJson[i].title,
-        content: replaceArticle,
+        content,
       });
 
       console.log(

@@ -1,8 +1,9 @@
-import upload from "./qiniuUpload.mjs";
-import { PassThrough, Readable } from "node:stream";
 import fs from "node:fs";
-import request from 'request';
-import toReadableStream from 'to-readable-stream';
+import request from "request";
+import upload2Cdn from "./qiniuUpload.mjs";
+import { resolve, removeFile } from "../utils/fileSystem.mjs";
+
+const CDN_HOST = "https://cdn.x-station.cn";
 
 export async function replaceAsync(str, regex, asyncFn) {
   const promises = [];
@@ -15,27 +16,32 @@ export async function replaceAsync(str, regex, asyncFn) {
 }
 
 export async function myAsyncFn(match, url) {
-  // if (url.indexOf('cdn.x-station.cn') === -1) {
-  // const result = await qiniuUpload({
-  //     uploadUrl: url,
-  //     token: e.data.token
-  // });
-  // return `<div class="custom-upload-local-img"><img src="${result}" /></div>`;
-  // return img;
-  // }
-  console.log(url);
-  const res = await fetch(url, {
-    method: "GET",
+  const res = request(url);
+  const filenameReg = /.*\/(.*.(png|jpg|jpeg|gif|svg)$)/gi;
+
+  const matchFilename = filenameReg.exec(url);
+  let filename;
+
+  if (matchFilename) {
+    filename = matchFilename[1];
+  }
+
+  const savePath = `${resolve("images")}/${filename}`;
+  const stream = fs.createWriteStream(`${resolve("images")}/${filename}`);
+  let uploadRes;
+
+  res.pipe(stream).addListener("finish", async () => {
+    try {
+      uploadRes = await upload2Cdn({
+        path: savePath,
+        filename,
+      });
+
+      await removeFile(savePath);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
-  const uploadRes = await upload({
-    stream: res.body,
-    fileName: "test.png",
-  });
-
-  console.log(uploadRes);
-
-  // await upload
-
-  return match;
+  return `<img src="${CDN_HOST}/dev/web/jinTestPost/${filename}?timestamp=${+new Date()}" />`;
 }

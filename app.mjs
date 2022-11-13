@@ -1,4 +1,3 @@
-console.log(1);
 import dotenv from "dotenv";
 import chalk from "chalk";
 import {

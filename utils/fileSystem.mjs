@@ -1,10 +1,10 @@
 // const fs = require("fs");
 // const path = require("path");
-import fs from 'node:fs';
-import path from 'node:path';
-import { __dirname } from './pathName.mjs';
+import fs from "node:fs";
+import path from "node:path";
+import { __dirname } from "./pathName.mjs";
 
-const resolve = (s) => path.resolve(__dirname, '..', s);
+const resolve = (s) => path.resolve(__dirname, "..", s);
 
 /**
  * 文件读取操作
@@ -89,9 +89,27 @@ function mkdir(directory) {
   });
 }
 
+/**
+ * 删除文件
+ * @param {String} path 文件路径
+ * @returns 
+ */
+function removeFile(path) {
+  return new Promise((resolve, reject) => {
+    fs.unlink(path, (err) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve();
+    });
+  });
+}
+
 export {
   mkdir,
   resolve,
+  removeFile,
   dirIsExists,
   readFilePromise,
   writeFilePromise,

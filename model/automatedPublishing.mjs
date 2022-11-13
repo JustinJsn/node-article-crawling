@@ -23,7 +23,7 @@ export async function automatedPublishing() {
       },
     });
     const page = await browser.newPage();
-    await page.goto(prodLoginUrl, {
+    await page.goto(loginUrl, {
       waitUntil: "networkidle2",
     });
 
