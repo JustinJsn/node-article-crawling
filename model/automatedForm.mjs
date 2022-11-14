@@ -4,6 +4,9 @@ import { exec } from "node:child_process";
 import sleep from "../utils/sleep.mjs";
 import { readFilePromise, resolve } from "../utils/fileSystem.mjs";
 
+/**
+ * 自动填入帖子内容
+ */
 export default async function automatedForm(page) {
   // 关闭弹窗
   const closeIcon = await page.waitForSelector(
@@ -11,7 +14,7 @@ export default async function automatedForm(page) {
   );
   await closeIcon.click();
 
-  await sleep(1000);
+  await sleep(800);
 
   // 点击发布按钮，链接到发布页面
   const publishButton = await page.$(
@@ -20,7 +23,7 @@ export default async function automatedForm(page) {
   await publishButton.click();
 
   // 先睡 3s 让 DOM 渲染完成再做点击处理
-  await sleep(3000);
+  await sleep(1200);
 
   // 圈子选择
   const circleSelectInput = await page.waitForSelector(
@@ -56,14 +59,14 @@ export default async function automatedForm(page) {
     "#app > div.layout-wrapper > div > div.post-title-card > div.el-input.title-input > input"
   );
 
-  exec("clip").stdin.end(iconv.encode(data[0].title, "utf-8"));
+  exec("clip").stdin.end(iconv.encode(data[0].title, "gbk"));
   await title.focus();
   await page.keyboard.down("Control");
   await page.keyboard.down("V");
   await page.keyboard.up("V");
   await page.keyboard.up("Control");
 
-  await sleep(1000);
+  await sleep(680);
 
   // 输入主体内容
   const sourceEditor = await page.waitForSelector(
@@ -74,7 +77,7 @@ export default async function automatedForm(page) {
     ".tox-dialog__content-js > div > div > div > div > textarea"
   );
 
-  exec("clip").stdin.end(iconv.encode(data[0].content, "utf-8"));
+  exec("clip").stdin.end(iconv.encode(data[0].content, "gbk"));
   await textarea.focus();
   await page.keyboard.down("Control");
   await page.keyboard.down("V");

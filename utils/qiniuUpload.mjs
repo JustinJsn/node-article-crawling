@@ -13,7 +13,7 @@ const putPolicy = new qiniu.rs.PutPolicy(options);
 const uploadToken = putPolicy.uploadToken(mac);
 const config = new qiniu.conf.Config();
 // 空间对应的机房
-config.zone = qiniu.zone[process.env.QINIU_ZONE];
+config.zone = qiniu.zone.Zone_z2;
 // 是否使用https域名
 config.useHttpsDomain = true;
 // 上传是否使用cdn加速
