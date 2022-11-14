@@ -1,4 +1,3 @@
-
 /**
  * 睡眠函数
  * @param {Number} wait 睡眠时间

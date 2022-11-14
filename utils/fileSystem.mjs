@@ -1,10 +1,10 @@
 // const fs = require("fs");
 // const path = require("path");
-import fs from "node:fs";
-import path from "node:path";
-import { __dirname } from "./pathName.mjs";
+import fs from 'node:fs';
+import path from 'node:path';
+import { __dirname } from './pathName.mjs';
 
-const resolve = (s) => path.resolve(__dirname, "..", s);
+const resolve = (s) => path.resolve(__dirname, '..', s);
 
 /**
  * 文件读取操作
@@ -13,7 +13,7 @@ const resolve = (s) => path.resolve(__dirname, "..", s);
  */
 function readFilePromise(path) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, "utf-8", (err, data) => {
+    fs.readFile(path, 'utf-8', (err, data) => {
       if (err) {
         reject(err);
         return;
@@ -35,7 +35,7 @@ function writeFilePromise(file, data) {
       file,
       data,
       {
-        encoding: "utf-8",
+        encoding: 'utf-8',
       },
       (err) => {
         if (err) {
@@ -75,7 +75,7 @@ function dirIsExists(path) {
 function mkdir(directory) {
   return new Promise(async (resolve, reject) => {
     if (await dirIsExists(directory)) {
-      reject("文件夹已存在");
+      reject('文件夹已存在');
       return;
     }
 
@@ -92,7 +92,7 @@ function mkdir(directory) {
 /**
  * 删除文件
  * @param {String} path 文件路径
- * @returns 
+ * @returns
  */
 function removeFile(path) {
   return new Promise((resolve, reject) => {
@@ -106,8 +106,25 @@ function removeFile(path) {
   });
 }
 
+function writer(path, response) {
+  return new Promise((resolve, reject) => {
+    const _writer = fs.createWriteStream(path);
+
+    response.data.pipe(_writer);
+
+    _writer.on('finish', () => {
+      resolve();
+    });
+
+    _writer.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
 export {
   mkdir,
+  writer,
   resolve,
   removeFile,
   dirIsExists,

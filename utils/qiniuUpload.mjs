@@ -1,13 +1,13 @@
-import qiniu from "qiniu";
+import qiniu from 'qiniu';
 
-const CDN_HOST = "https://cdn.x-station.cn";
+const CDN_HOST = 'https://cdn.x-station.cn';
 const mac = new qiniu.auth.digest.Mac(
   process.env.QINIU_AK,
   process.env.QINIU_SK
 );
 const options = {
   scope: process.env.QINIU_BUCKET,
-  expires: 3600
+  expires: 3600,
 };
 const putPolicy = new qiniu.rs.PutPolicy(options);
 const uploadToken = putPolicy.uploadToken(mac);
@@ -51,7 +51,7 @@ export default async function upload2Cdn({ path, filename }) {
           return;
         }
 
-        reject("上传失败");
+        reject('上传失败');
       }
     );
   });
