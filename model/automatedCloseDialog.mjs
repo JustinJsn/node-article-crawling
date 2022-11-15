@@ -1,14 +1,24 @@
 import sleep from '../utils/sleep.mjs';
 
-export default async function automatedCloseDialog(page) {
+export default async function automatedCloseDialog(page, start) {
+  if (!start) return;
+
   // 关闭弹窗
-  // TODO 这里需要优化一下，不能使用 waitForSelector 去等待弹窗元素，如果用户不触发弹窗会出现超时
-  const closeIcon = await page.waitForSelector(
+  const closeIcon = await page.$(
     '#app > div.layout-wrapper > div > div.el-dialog__wrapper.global-dialog.bulletin-board-container > div > div.el-dialog__body > div > div.close-wrapper > i'
   );
-  await closeIcon.click();
 
-  await sleep(800);
+  if (closeIcon) {
+    await closeIcon.click();
+  } else {
+    await page.evaluate(() => {
+      location.href = `${location.origin}/app/new-version/publish/post`;
+    });
+
+    return;
+  }
+
+  // await sleep(1400);
 
   // 点击发布按钮，链接到发布页面
   const publishButton = await page.$(
@@ -17,5 +27,5 @@ export default async function automatedCloseDialog(page) {
   await publishButton.click();
 
   // 先睡 1.2s 让 DOM 渲染完成再做点击处理
-  await sleep(1200);
+  // await sleep(1200);
 }

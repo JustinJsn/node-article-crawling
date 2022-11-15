@@ -17,7 +17,7 @@ async function fetchDetailData() {
     const detailItem = [];
     console.log(chalk.cyan(`开始爬取详情页数据，共 ${parseJson.length} 条`));
 
-    // for (let i = 0; i < 1; i++) {
+    // for (let i = 0; i < 3; i++) {
     for (let i = 0; i < parseJson.length; i++) {
       console.log(
         chalk.cyan(`开始爬取第 ${i + 1} 条，链接：${parseJson[i].detailUrl}`)
@@ -54,10 +54,10 @@ async function fetchDetailData() {
       });
 
       console.log(
-        chalk.green(`第 ${i + 1} 条爬取成功，休息 2s 开始爬取下一条数据...`)
+        chalk.green(`第 ${i + 1} 条爬取成功，休息 1s 开始爬取下一条数据...`)
       );
 
-      await sleep(2000);
+      await sleep(780);
     }
 
     return detailItem;

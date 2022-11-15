@@ -8,15 +8,15 @@ import automatedForm from './automatedForm.mjs';
 import automatedPublish from './automatedPublish.mjs';
 import automatedCloseDialog from './automatedCloseDialog.mjs';
 
-const testPublishUrl = 'https://ts.x-station.cn';
-const prodPublishUrl = 'https://www.x-station.cn';
-const loginUrl = `${testPublishUrl}/app/new-version/login`;
-const prodLoginUrl = `${prodPublishUrl}/app/new-version/login`;
+// const testPublishUrl = 'https://ts.x-station.cn';
+// const prodPublishUrl = 'https://www.x-station.cn';
+const loginUrl = `${process.env.PUBLISH_HOST}/app/new-version/login`;
+// const prodLoginUrl = `${prodPublishUrl}/app/new-version/login`;
 
 export async function automatedPublishing() {
   try {
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: 'chrome',
       slowMo: 100,
       devtools: false,
       defaultViewport: {
@@ -34,51 +34,73 @@ export async function automatedPublishing() {
     const accountStart = account.start;
     const accountEnd = account.end;
     let count = 0;
-    let start = true;
 
     for (let i = accountStart; i <= accountEnd; i++) {
       const email = `20220705${i}@qq.com`;
+      let start = true;
+
+      console.log(chalk.bgYellow('当前账号: ', email));
       await automatedLogin(page, email);
 
+      await sleep(3000);
+
       if (start) {
-        await automatedCloseDialog(page);
+        await automatedCloseDialog(page, start);
         start = false;
       }
 
       for (let j = 0; j < 2; j++) {
-        await sleep(1200);
-        await automatedForm(page, count);
         await sleep(380);
+        await automatedForm(page, count);
+        await sleep(3000); // 需要等编辑器处理一下资源
         await automatedPublish(page);
         count++;
 
         if (j === 0) {
+          await sleep(1800);
           // 点击发布按钮
-          const publishButton = await page.waitForSelector(
+          const publishButton = await page.$(
             '#app > div.layout-wrapper > div > div.creation-center-post-manage > div.post-content-card > div.content-card-list > div.operate-wrapper > button'
           );
 
-          await publishButton.click();
+          if (publishButton) {
+            await publishButton.click();
+          } else {
+            await page.evaluate(() => {
+              location.href = `${location.origin}/app/new-version/publish/post`;
+            });
+          }
         }
 
         if (j === 1) {
-          // 点击退出登录按钮
-          const element = await page.$(
-            '#app > div.layout-wrapper > header > div > div.header-info-wrapper > div.custom-dropdown.el-dropdown'
-          );
-          const box = await element.boundingBox();
-          const x = box.x + box.width / 2;
-          const y = box.y + box.height / 2;
-          await page.mouse.move(x, y);
+          await sleep(2000);
+          await page.evaluate(() => {
+            (async () => {
+              function getCookie(name) {
+                const arr = document.cookie.match(
+                  new RegExp('(^| )' + name + '=([^;]*)(;|$)')
+                );
+                if (arr != null) return arr[2];
+                return null;
+              }
 
-					// TODO 这里报错了，待解决 - 报错原因：未查找到 DOM 元素
-          const logoutButton = await page.waitForSelector(
-            '.el-dropdown-menu > li:nth-child(2)'
-          );
-          await logoutButton.click();
+              await fetch(`${location.origin}/web/user/logout`, {
+                headers: {
+                  authorization: getCookie('Authorization'),
+                },
+              });
+            })();
+            location.href = `${location.origin}/app/new-version/login`;
+          });
+          console.log(chalk.bgBlue(`账号 ${email} 每日两篇发帖完成`));
+          await sleep(1000);
+          // page.close();
         }
       }
     }
+
+    await page.close();
+    await browser.close();
   } catch (error) {
     console.log(chalk.red('出错了', error));
   }
