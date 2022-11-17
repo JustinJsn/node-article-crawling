@@ -1,8 +1,7 @@
 import iconv from 'iconv-lite';
 import { exec } from 'node:child_process';
-
-import sleep from '../utils/sleep.mjs';
-import { readFilePromise, resolve } from '../utils/fileSystem.mjs';
+import { DETAIL_FILE_NAME } from '../common/constants.mjs';
+import { readFilePromise } from '../utils/fileSystem.mjs';
 
 /**
  * 自动填入帖子内容
@@ -15,8 +14,6 @@ export default async function automatedForm(page, idx) {
     );
     await circleSelectInput.click();
 
-    // await sleep(1200);
-
     const dropdownItem = await page.waitForSelector(
       'body > div.el-select-dropdown.el-popper > div.el-scrollbar > div.el-select-dropdown__wrap.el-scrollbar__wrap > ul > li:nth-child(2)'
     );
@@ -28,8 +25,6 @@ export default async function automatedForm(page, idx) {
     );
     await tagSelectInput.click();
 
-    // await sleep(1200);
-
     const tagDropdownItem = await page.waitForSelector(
       'body > div.el-select-dropdown.el-popper.is-multiple > div.el-scrollbar > div.el-select-dropdown__wrap.el-scrollbar__wrap > ul > li:nth-child(4)'
     );
@@ -38,7 +33,7 @@ export default async function automatedForm(page, idx) {
 
     // 填写标题
     const detailJson = await readFilePromise(
-      resolve('detailJson/金品侧_1.json')
+      DETAIL_FILE_NAME
     );
     const data = JSON.parse(detailJson);
     const title = await page.waitForSelector(

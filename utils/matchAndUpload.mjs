@@ -36,20 +36,22 @@ export default async function matchAndUpload(str) {
       continue;
     }
 
-    console.log(233);
-
     const savePath = `${resolve('images')}/${filename}`;
-    const response = await axios({
-      url,
-      method: 'GET',
-      responseType: 'stream',
-    });
+    try {
+      const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream',
+      });
 
-    await writer(savePath, response);
-    await upload2Cdn({
-      path: savePath,
-      filename,
-    });
-    await removeFile(savePath);
+      await writer(savePath, response);
+      await upload2Cdn({
+        path: savePath,
+        filename,
+      });
+      await removeFile(savePath);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

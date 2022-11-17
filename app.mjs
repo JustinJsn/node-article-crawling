@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import chalk from 'chalk';
 import {
   mkdir,
-  resolve,
   removeFile,
   dirIsExists,
   writeFilePromise,
@@ -10,6 +9,12 @@ import {
 import fetchHtml from './model/jinFetchListData.mjs';
 import fetchDetailData from './model/jinFetchDetailData.mjs';
 import { automatedPublishing } from './model/automatedPublishing.mjs';
+import {
+  LIST_DIR,
+  LIST_FILE_NAME,
+  DETAIL_DIR,
+  DETAIL_FILE_NAME,
+} from './common/constants.mjs';
 
 // fetchURL http://www.jinceping.com/article/category/baogoa/page/${page}
 
@@ -30,33 +35,28 @@ async function customApp() {
     // 抓取列表数据
     const listData = await fetchHtml();
     // 保存列表 json 数据
-    const listJsonDir = resolve('./listJson');
-    const hasDir = await dirIsExists(listJsonDir);
-    const listFileName = resolve(`${listJsonDir}/金评测_1.json`);
+    const hasDir = await dirIsExists(LIST_DIR);
 
     if (!hasDir) {
-      await mkdir(listJsonDir);
+      await mkdir(LIST_DIR);
     }
 
-    await writeFilePromise(listFileName, JSON.stringify(listData));
+    await writeFilePromise(LIST_FILE_NAME, JSON.stringify(listData));
     console.log(chalk.green(`列表爬取完成，共 ${listData.length} 条数据`));
 
-    const detailJsonDir = resolve('./detailJson');
-    const hasDetailDir = await dirIsExists(detailJsonDir);
-    const detailFileName = resolve(`${detailJsonDir}/金品侧_1.json`);
-
+    const hasDetailDir = await dirIsExists(DETAIL_DIR);
     if (!hasDetailDir) {
-      await mkdir(detailJsonDir);
+      await mkdir(DETAIL_DIR);
     }
 
     const detailData = await fetchDetailData();
 
-    await writeFilePromise(detailFileName, JSON.stringify(detailData));
+    await writeFilePromise(DETAIL_FILE_NAME, JSON.stringify(detailData));
 
     console.log(chalk.blue('开始发布帖子'));
     await publish();
-		await removeFile(listFileName);
-		await removeFile(detailFileName);
+    await removeFile(LIST_FILE_NAME);
+    await removeFile(DETAIL_FILE_NAME);
     console.log(chalk.green('爬取完成，关闭服务!'));
   } catch (error) {
     console.log(error);

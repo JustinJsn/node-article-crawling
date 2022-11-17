@@ -2,17 +2,18 @@ import chalk from 'chalk';
 import { load } from 'cheerio';
 import sleep from '../utils/sleep.mjs';
 import {
-  resolve,
-  readFilePromise,
-  dirIsExists,
   mkdir,
+  resolve,
+  dirIsExists,
+  readFilePromise,
 } from '../utils/fileSystem.mjs';
-import { replaceAsync, myAsyncFn } from '../utils/replaceAndUpload.mjs';
 import matchAndUpload from '../utils/matchAndUpload.mjs';
+import { LIST_FILE_NAME } from '../common/constants.mjs';
+import { replaceAsync, myAsyncFn } from '../utils/replaceAndUpload.mjs';
 
 async function fetchDetailData() {
   try {
-    const json = await readFilePromise(resolve('listJson/金评测_1.json'));
+    const json = await readFilePromise(LIST_FILE_NAME);
     const parseJson = JSON.parse(json);
     const detailItem = [];
     console.log(chalk.cyan(`开始爬取详情页数据，共 ${parseJson.length} 条`));

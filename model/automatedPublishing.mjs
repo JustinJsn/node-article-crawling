@@ -27,7 +27,7 @@ export async function automatedPublishing() {
     const page = await browser.newPage();
 
     await page.goto(loginUrl, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'domcontentloaded',
     });
 
     const account = JSON.parse(process.env.ACCOUNT);

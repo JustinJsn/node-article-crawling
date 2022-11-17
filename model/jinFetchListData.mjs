@@ -2,10 +2,11 @@
 // const chalk = require("chalk");
 import { load } from 'cheerio';
 import chalk from 'chalk';
+import { page } from '../common/constants.mjs';
 
 export default async function fetchHtml() {
   const listData = [];
-  const url = 'http://www.jinceping.com/article/category/baogoa/page/1';
+  const url = `http://www.jinceping.com/article/category/baogoa/page/${page}`;
   console.log(chalk.cyan(`开始爬取，爬取的链接是: ${url}`));
 
   const res = await fetch(url, {
